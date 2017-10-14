@@ -1,0 +1,69 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "AWS CloudFormation Sample Template ElasticBeanstalk: Configure and launch an AWS Elastic Beanstalk application that connects to an Amazon RDS database instance. Monitoring is setup on the database. Note, since AWS Elastic Beanstalk is only available in US-East-1, this template can only be used to create stacks in the US-East-1 region. **WARNING** This template creates one or more Amazon EC2 instances and an Amazon Relational Database Service database instance. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Resources": {
+    "SampleApplication": {
+      "Type": "AWS::ElasticBeanstalk::Application",
+      "Properties": {
+        "Description": "AWS Elastic Beanstalk Sample Application",
+        "ApplicationVersions": [
+          {
+            "VersionLabel": "Initial Version",
+            "Description": "Version 1.0",
+            "SourceBundle": {
+              "S3Bucket": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "suyashbucket1234",
+                    {
+                      "Ref": "AWS::Region"
+                    }
+                  ]
+                ]
+              },
+              "S3Key": "demoAWS-0.0.1-SNAPSHOT.jar"
+            }
+          }
+        ],
+        "ConfigurationTemplates": [
+          {
+            "TemplateName": "DefaultConfiguration",
+            "Description": "Default Configuration Version 1.0 - with SSH access",
+            "SolutionStackName": "64bit Amazon Linux 2016.09 v2.5.5 running Tomcat 8 Java 8"
+          }
+        ]
+      }
+    },
+    "SampleEnvironment": {
+      "Type": "AWS::ElasticBeanstalk::Environment",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "SampleApplication"
+        },
+        "Description": "AWS Elastic Beanstalk Environment running Sample Application",
+        "TemplateName": "DefaultConfiguration",
+        "VersionLabel": "0.0.1-SNAPSHOT"
+      }
+    }
+  },
+  "Outputs": {
+    "URL": {
+      "Description": "URL of the AWS Elastic Beanstalk Environment",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "http://",
+            {
+              "Fn::GetAtt": [
+                "SampleEnvironment",
+                "EndpointURL"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  }
+}

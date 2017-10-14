@@ -1,0 +1,31 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Metadata": {
+    "AWS::CloudFormation::Designer": {
+      "36ff0fa0-db11-4c54-a1dc-271eae31b2f3": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 119,
+          "y": 106
+        },
+        "z": 0
+      }
+    }
+  },
+  "Resources": {
+    "GreetingStreamTemplate": {
+      "Type": "AWS::Kinesis::Stream",
+      "Properties": {
+        	"ShardCount" : 1
+        },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "36ff0fa0-db11-4c54-a1dc-271eae31b2f3"
+        }
+      }
+    }
+  }
+}

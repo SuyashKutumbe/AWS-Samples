@@ -1,0 +1,45 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Resources": {
+    "MyLambda": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "bucket-suyash-jar",
+          "S3Key": "demoS3Lambda-0.0.1-SNAPSHOT.jar"
+        },
+        "Description": "Lambda to upload all the files from old s3 bucket to new s3 bucket",
+        "FunctionName": "myFunc",
+        "Handler": "controller.UploadFileToNewS3",
+        "MemorySize": 512,
+        "Role": "arn:aws:iam::962886271306:role/service-role/s3lambdarole",
+        "Runtime": "java8",
+        "Timeout": 100
+      }
+    },
+    "NewBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "AccessControl": "PublicReadWrite",
+        "BucketName": "bucket-suyash-new"
+      }
+    },
+    "OldBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "AccessControl": "PublicReadWrite",
+        "BucketName": "bucket-suyash"
+      }
+    },
+    "PhotoBucketExecuteProcessorPermission": {
+      "Type" : "AWS::Lambda::Permission",
+      "Properties" : {
+        "Action":"lambda:invokeFunction",
+        "FunctionName": { "Fn::GetAtt": [ "MyLambda", "Arn" ]},
+        "Principal": "s3.amazonaws.com",
+        "SourceArn": "arn:aws:s3:::bucket-suyash"
+      }
+    }
+  }
+}

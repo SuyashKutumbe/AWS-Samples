@@ -1,0 +1,58 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    "DBName": {
+      "Default": "defaultName",
+      "Description": "The default database name",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "64",
+      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters."
+    },
+    "DBSnapshotIdentifier": {
+      "Description": " The RDS MySQL snapshot name to restore to the new DB instance.",
+      "Type": "String",
+      "Default": ""
+    }
+  },
+  "Conditions": {
+    "UseDbSnapshot": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "DBSnapshotIdentifier"
+            },
+            ""
+          ]
+        }
+      ]
+    }
+  },
+  "Resources": {
+    "MyDB": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "DBName": {
+          "Fn::If": [
+            "UseDbSnapshot",
+            {
+              "Ref": "AWS::NoValue"
+            },
+            {
+              "Ref": "DBName"
+            }
+          ]
+        },
+        "AllocatedStorage": "5",
+        "DBInstanceClass": "db.t2.micro",
+        "Engine": "MySQL",
+        "EngineVersion": "5.6",
+        "MasterUsername": "root",
+        "MasterUserPassword": "admin1234"
+      },
+      "DeletionPolicy": "Snapshot"
+    }
+  }
+}
